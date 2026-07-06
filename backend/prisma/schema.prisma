@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique // e.g., "Team Member", "Manager"
+  users User[]
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
+  passwordHash  String
+  fullName      String
+  roleId        Int
+  role          Role      @relation(fields: [roleId], references: [id])
+  createdAt     DateTime  @default(now())
+  
+  reports       Report[]
+  projects      Project[] @relation("UserProjects") // Optional assignment feature
+}
+
+model Project {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  
+  reports     Report[]
+  users       User[]    @relation("UserProjects") // Optional assignment feature
+}
+
+model Report {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  projectId      Int
+  weekStartDate  DateTime @db.Date
+  weekEndDate    DateTime @db.Date
+  tasksCompleted String   @db.Text
+  tasksPlanned   String   @db.Text
+  blockers       String?  @db.Text
+  hoursWorked    Decimal? @db.Decimal(5, 2)
+  notes          String?  @db.Text
+  status         String   @default("pending") // pending, submitted, late
+  submittedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project        Project  @relation(fields: [projectId], references: [id])
+}
