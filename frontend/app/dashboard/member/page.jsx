@@ -10,7 +10,6 @@ export default function MemberDashboard() {
     const [user, setUser] = useState(null);
 
     // Form State
-    const [projectId, setProjectId] = useState('1'); // Defaults to the project we just created
     const [weekStartDate, setWeekStartDate] = useState('');
     const [weekEndDate, setWeekEndDate] = useState('');
     const [tasksCompleted, setTasksCompleted] = useState('');
@@ -18,19 +17,50 @@ export default function MemberDashboard() {
     const [blockers, setBlockers] = useState('');
     const [hoursWorked, setHoursWorked] = useState('');
     const [notes, setNotes] = useState('');
+    const [projects, setProjects] = useState([]);
+    const [projectId, setProjectId] = useState('');
+    const [myReports, setMyReports] = useState([]);
 
     const [status, setStatus] = useState({ type: '', message: '' });
 
     // 1. Protect the route: Check if user is logged in
+    // 1. Protect the route and fetch initial data
     useEffect(() => {
         const token = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
 
+        // Step A: Kick them out immediately if they aren't logged in
         if (!token || !storedUser) {
             router.push('/login');
-        } else {
-            setUser(JSON.parse(storedUser));
+            return;
         }
+
+        // Step B: If they are logged in, set the user state
+        setUser(JSON.parse(storedUser));
+
+        // Step C: Define the fetch functions BEFORE calling them
+        const fetchProjects = async () => {
+            try {
+                const data = await apiFetch('/projects', { method: 'GET' });
+                setProjects(data);
+                if (data.length > 0) setProjectId(data[0].id.toString());
+            } catch (err) {
+                console.error("Failed to load projects:", err);
+            }
+        };
+
+        const fetchMyReports = async () => {
+            try {
+                const data = await apiFetch('/reports/me', { method: 'GET' });
+                setMyReports(data);
+            } catch (err) {
+                console.error("Failed to load history:", err);
+            }
+        };
+
+        // Step D: Now that they are defined, it is safe to call them!
+        fetchProjects();
+        fetchMyReports();
     }, [router]);
 
     // 2. Handle form submission
@@ -64,6 +94,8 @@ export default function MemberDashboard() {
         } catch (error) {
             setStatus({ type: 'error', message: error.message });
         }
+        const updatedReports = await apiFetch('/reports/me', { method: 'GET' });
+        setMyReports(updatedReports);
     };
 
     if (!user) return <div className="p-8 text-center">Loading dashboard...</div>;
@@ -91,7 +123,7 @@ export default function MemberDashboard() {
 
                 {status.message && (
                     <div className={`mb-6 rounded p-4 text-sm ${status.type === 'success' ? 'bg-green-100 text-green-800' :
-                            status.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                        status.type === 'error' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
                         }`}>
                         {status.message}
                     </div>
@@ -99,6 +131,25 @@ export default function MemberDashboard() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="mb-1 block text-sm font-medium text-gray-700">Project</label>
+                            <select
+                                required
+                                value={projectId}
+                                onChange={(e) => setProjectId(e.target.value)}
+                                className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none"
+                            >
+                                {projects.length === 0 ? (
+                                    <option value="">Loading...</option>
+                                ) : (
+                                    projects.map((project) => (
+                                        <option key={project.id} value={project.id}>
+                                            {project.name}
+                                        </option>
+                                    ))
+                                )}
+                            </select>
+                        </div>
                         <div>
                             <label className="mb-1 block text-sm font-medium text-gray-700">Week Start Date</label>
                             <input type="date" required value={weekStartDate} onChange={(e) => setWeekStartDate(e.target.value)} className="w-full rounded border px-3 py-2 focus:border-blue-500 focus:outline-none" />
@@ -135,6 +186,51 @@ export default function MemberDashboard() {
                         Submit Report
                     </button>
                 </form>
+            </div>
+            {/* --- History Table Section --- */}
+            <div className="mt-12 border-t pt-8">
+                <h2 className="mb-4 text-xl font-semibold text-gray-700">My Previous Reports</h2>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm text-gray-600">
+                        <thead className="bg-gray-100 text-xs uppercase text-gray-700">
+                            <tr>
+                                <th className="px-4 py-3">Week</th>
+                                <th className="px-4 py-3">Project</th>
+                                <th className="px-4 py-3">Tasks Completed</th>
+                                <th className="px-4 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {myReports.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" className="px-4 py-6 text-center text-gray-500">
+                                        You haven't submitted any reports yet.
+                                    </td>
+                                </tr>
+                            ) : (
+                                myReports.map((report) => (
+                                    <tr key={report.id} className="border-b hover:bg-gray-50">
+                                        <td className="px-4 py-3 text-xs">
+                                            {new Date(report.weekStartDate).toLocaleDateString()} - <br />
+                                            {new Date(report.weekEndDate).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-4 py-3 font-medium text-gray-900">{report.project?.name}</td>
+                                        <td className="px-4 py-3 max-w-xs truncate" title={report.tasksCompleted}>
+                                            {report.tasksCompleted}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${report.status === 'approved' ? 'bg-green-100 text-green-800' :
+                                                report.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                                                }`}>
+                                                {report.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );

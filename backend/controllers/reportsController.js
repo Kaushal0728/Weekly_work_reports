@@ -63,3 +63,49 @@ export const getAllReports = async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch reports' });
     }
 };
+
+export const updateReportStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        // Validate the incoming status value
+        const validStatuses = ['approved', 'rejected', 'submitted', 'pending'];
+        if (!validStatuses.includes(status)) {
+            return res.status(400).json({ error: 'Invalid status value' });
+        }
+
+        // Update the report status in the database
+        const updatedReport = await prisma.report.update({
+            where: { id: parseInt(id) },
+            data: { status }
+        });
+
+        res.status(200).json({ message: `Report status updated to ${status}`, report: updatedReport });
+    } catch (error) {
+        console.error("Error updating report status:", error);
+        res.status(500).json({ error: 'Failed to update report status' });
+    }
+};
+
+export const getMyReports = async (req, res) => {
+    try {
+        // req.user.id is securely extracted from the JWT token
+        const userId = req.user.id;
+
+        const reports = await prisma.report.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' }, // Newest first
+            include: {
+                project: {
+                    select: { name: true }
+                }
+            }
+        });
+
+        res.status(200).json(reports);
+    } catch (error) {
+        console.error("Error fetching user reports:", error);
+        res.status(500).json({ error: 'Failed to fetch your reports' });
+    }
+};

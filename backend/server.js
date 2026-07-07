@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import reportRoutes from './routes/reportRoutes.js';
+import projectRoutes from './routes/projectRoutes.js';
 
 // Import Routes
 import authRoutes from './routes/authRoutes.js';
@@ -18,6 +19,7 @@ app.use(express.json());
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/projects', projectRoutes);
 
 // Basic Health Check Route
 app.get('/api/health', (req, res) => {
