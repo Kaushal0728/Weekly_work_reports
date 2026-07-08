@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "Weekly Reports",
-  description: "Team Weekly Report Generator",
+  title: "Weekly Reports — Team Report Management",
+  description: "Professional weekly report management system for teams and managers",
 };
 
 export default function RootLayout({
@@ -26,7 +22,8 @@ export default function RootLayout({
     // Add suppressHydrationWarning right here!
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${inter.variable} antialiased`}
+        style={{ fontFamily: "'Inter', sans-serif" }}
       >
         {children}
       </body>

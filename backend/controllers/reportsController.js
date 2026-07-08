@@ -13,8 +13,7 @@ export const submitReport = async (req, res) => {
             tasksCompleted,
             tasksPlanned,
             blockers,
-            hoursWorked,
-            notes
+            hoursWorked
         } = req.body;
 
         // Save it to the database
@@ -27,10 +26,8 @@ export const submitReport = async (req, res) => {
                 tasksCompleted,
                 tasksPlanned,
                 blockers,
-                hoursWorked,
-                notes,
+                hoursWorked: hoursWorked ? parseFloat(hoursWorked) : null,
                 status: 'submitted',
-                submittedAt: new Date(),
             }
         });
 
@@ -96,7 +93,7 @@ export const getMyReports = async (req, res) => {
 
         const reports = await prisma.report.findMany({
             where: { userId },
-            orderBy: { createdAt: 'desc' }, // Newest first
+            orderBy: { id: 'desc' }, // Newest first
             include: {
                 project: {
                     select: { name: true }

@@ -132,154 +132,196 @@ export default function ManagerDashboard() {
         setDateTo('');
     };
 
-    if (!user || loading) return <div className="p-8 text-center text-gray-600">Loading dashboard...</div>;
+    if (!user || loading) return (
+        <div className="flex h-full items-center justify-center">
+            <div className="text-center">
+                <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-4 border-blue-200 border-t-blue-600"></div>
+                <p className="text-sm text-slate-500">Loading dashboard...</p>
+            </div>
+        </div>
+    );
 
     return (
         <div className="p-8">
-            <div className="mx-auto max-w-7xl rounded-lg bg-white p-8 shadow-md">
-
-                <header className="mb-8 border-b pb-4">
-                    <h1 className="text-2xl font-bold text-gray-800">Manager Dashboard</h1>
-                    <p className="text-gray-600">Overview and filtering of all team weekly reports</p>
-                </header>
-
-                {error && <div className="mb-6 rounded bg-red-100 p-4 text-sm text-red-800">{error}</div>}
-
-                {/* --- Top Stat Cards --- */}
-                <div className="mb-6 flex gap-8 rounded-lg bg-gray-50 p-4 border">
-                    <div>
-                        <p className="text-sm font-medium text-gray-500">Pending Approvals</p>
-                        <p className="text-3xl font-bold text-yellow-600">{pendingCount}</p>
+            {/* Page Header */}
+            <div className="mb-8 flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl shadow-md" style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)' }}>
+                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500">Total Approved</p>
-                        <p className="text-3xl font-bold text-green-600">{approvedCount}</p>
+                        <h1 className="text-2xl font-bold text-slate-800">Manager Dashboard</h1>
+                        <p className="text-sm text-slate-500">Overview and filtering of all team weekly reports</p>
+                    </div>
+                </div>
+            </div>
+
+            {error && (
+                <div className="mb-6 flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    {error}
+                </div>
+            )}
+
+            {/* --- Top Stat Cards --- */}
+            <div className="mb-6 grid grid-cols-1 gap-5 sm:grid-cols-3">
+                <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-amber-50">
+                        <svg className="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                     </div>
                     <div>
-                        <p className="text-sm font-medium text-gray-500">Currently Showing</p>
-                        <p className="text-3xl font-bold text-blue-600">{filteredReports.length} <span className="text-sm text-gray-500 font-normal">reports</span></p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Pending Approvals</p>
+                        <p className="text-2xl font-bold text-amber-600">{pendingCount}</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-emerald-50">
+                        <svg className="h-5 w-5 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    </div>
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Approved</p>
+                        <p className="text-2xl font-bold text-emerald-600">{approvedCount}</p>
+                    </div>
+                </div>
+                <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-50">
+                        <svg className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </div>
+                    <div>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Currently Showing</p>
+                        <p className="text-2xl font-bold text-blue-600">{filteredReports.length} <span className="text-sm font-normal text-slate-400">reports</span></p>
+                    </div>
+                </div>
+            </div>
+
+            {/* --- Advanced Filter Toolbar --- */}
+            <div className="mb-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-600">Advanced Filters</h3>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button onClick={clearFilters} className="text-sm font-medium text-slate-400 hover:text-slate-600">
+                            Clear Filters
+                        </button>
+                        <button onClick={exportToCSV} className="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-sm hover:shadow-md" style={{ background: 'linear-gradient(135deg, #0f172a, #1e3a5f)' }}>
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            Export CSV
+                        </button>
                     </div>
                 </div>
 
-                {/* --- Advanced Filter Toolbar --- */}
-                <div className="mb-6 rounded-lg bg-white p-4 border shadow-sm">
-                    <div className="mb-4 flex items-center justify-between">
-                        <h3 className="text-sm font-bold text-gray-700 uppercase tracking-wider">Advanced Filters</h3>
-                        <div className="space-x-3">
-                            <button onClick={clearFilters} className="text-sm text-gray-500 hover:text-gray-700 hover:underline">
-                                Clear Filters
-                            </button>
-                            <button onClick={exportToCSV} className="rounded bg-gray-800 px-4 py-1.5 text-sm font-semibold text-white hover:bg-gray-700 transition">
-                                Export to CSV
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500">Status</label>
-                            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full rounded border px-3 py-1.5 text-sm bg-gray-50">
-                                <option value="All">All Statuses</option>
-                                <option value="submitted">Pending</option>
-                                <option value="approved">Approved</option>
-                                <option value="rejected">Rejected</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500">Team Member</label>
-                            <select value={memberFilter} onChange={(e) => setMemberFilter(e.target.value)} className="w-full rounded border px-3 py-1.5 text-sm bg-gray-50">
-                                <option value="All">All Members</option>
-                                {uniqueMembers.map(m => <option key={m} value={m}>{m}</option>)}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500">Project</label>
-                            <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)} className="w-full rounded border px-3 py-1.5 text-sm bg-gray-50">
-                                <option value="All">All Projects</option>
-                                {uniqueProjects.map(p => <option key={p} value={p}>{p}</option>)}
-                            </select>
-                        </div>
-
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500">From Date</label>
-                            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-full rounded border px-3 py-1.5 text-sm bg-gray-50" />
-                        </div>
-
-                        <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500">To Date</label>
-                            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-full rounded border px-3 py-1.5 text-sm bg-gray-50" />
-                        </div>
-                    </div>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
                     <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500">Team</label>
-                        <select value={teamFilter} onChange={(e) => setTeamFilter(e.target.value)} className="w-full rounded border px-3 py-1.5 text-sm bg-gray-50">
+                        <label className="mb-1.5 block text-xs font-semibold text-slate-400">Status</label>
+                        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none">
+                            <option value="All">All Statuses</option>
+                            <option value="submitted">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-slate-400">Team Member</label>
+                        <select value={memberFilter} onChange={(e) => setMemberFilter(e.target.value)} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none">
+                            <option value="All">All Members</option>
+                            {uniqueMembers.map(m => <option key={m} value={m}>{m}</option>)}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-slate-400">Project</label>
+                        <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none">
+                            <option value="All">All Projects</option>
+                            {uniqueProjects.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-slate-400">Team</label>
+                        <select value={teamFilter} onChange={(e) => setTeamFilter(e.target.value)} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none">
                             <option value="All">All Teams</option>
                             {uniqueTeams.map(t => <option key={t} value={t}>{t}</option>)}
                         </select>
                     </div>
-                </div>
 
-                {/* --- Reports Table --- */}
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-left text-sm text-gray-600">
-                        <thead className="bg-gray-100 text-xs uppercase text-gray-700">
-                            <tr>
-                                <th className="px-4 py-3">Team Member</th>
-                                <th className="px-4 py-3">Team(s)</th>
-                                <th className="px-4 py-3">Project</th>
-                                <th className="px-4 py-3">Week</th>
-                                <th className="px-4 py-3">Completed Tasks</th>
-                                <th className="px-4 py-3">Status</th>
-                                <th className="px-4 py-3 text-center">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {filteredReports.length === 0 ? (
-                                <tr>
-                                    <td colSpan="6" className="px-4 py-8 text-center text-gray-500">No reports match your filters.</td>
-                                </tr>
-                            ) : (
-                                filteredReports.map((report) => (
-                                    <tr key={report.id} className="hover:bg-gray-50">
-                                        <td className="px-4 py-3 font-medium text-gray-900">{report.user?.fullName}</td>
-                                        <td className="px-4 py-3 text-xs text-gray-500">
-                                            {report.user?.teams?.length > 0
-                                                ? report.user.teams.map(t => t.name).join(', ')
-                                                : 'Unassigned'}
-                                        </td>
-                                        <td className="px-4 py-3">{report.project?.name}</td>
-                                        <td className="px-4 py-3 text-xs">
-                                            {new Date(report.weekStartDate).toLocaleDateString()} - <br />
-                                            {new Date(report.weekEndDate).toLocaleDateString()}
-                                        </td>
-                                        <td className="px-4 py-3 max-w-xs truncate" title={report.tasksCompleted}>{report.tasksCompleted}</td>
-                                        <td className="px-4 py-3">
-                                            <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${report.status === 'approved' ? 'bg-green-100 text-green-800' :
-                                                report.status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
-                                                }`}>
-                                                {report.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-3 text-center space-x-2 whitespace-nowrap">
-                                            {report.status !== 'approved' && (
-                                                <button onClick={() => handleStatusUpdate(report.id, 'approved')} className="rounded bg-green-600 px-2 py-1 text-xs font-semibold text-white hover:bg-green-700 transition">
-                                                    Approve
-                                                </button>
-                                            )}
-                                            {report.status !== 'rejected' && (
-                                                <button onClick={() => handleStatusUpdate(report.id, 'rejected')} className="rounded bg-red-600 px-2 py-1 text-xs font-semibold text-white hover:bg-red-700 transition">
-                                                    Reject
-                                                </button>
-                                            )}
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-slate-400">From Date</label>
+                        <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none" />
+                    </div>
+
+                    <div>
+                        <label className="mb-1.5 block text-xs font-semibold text-slate-400">To Date</label>
+                        <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-blue-400 focus:outline-none" />
+                    </div>
                 </div>
+            </div>
+
+            {/* --- Reports Table --- */}
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                <table className="w-full text-left text-sm">
+                    <thead>
+                        <tr style={{ background: 'linear-gradient(135deg, #0f172a, #1e3a5f)' }}>
+                            <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-blue-100">Team Member</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-blue-100">Team(s)</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-blue-100">Project</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-blue-100">Week</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-blue-100">Completed Tasks</th>
+                            <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-blue-100">Status</th>
+                            <th className="px-5 py-3.5 text-center text-xs font-semibold uppercase tracking-wider text-blue-100">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {filteredReports.length === 0 ? (
+                            <tr>
+                                <td colSpan="7" className="px-5 py-12 text-center text-slate-400">
+                                    <svg className="mx-auto mb-2 h-8 w-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                                    No reports match your filters.
+                                </td>
+                            </tr>
+                        ) : (
+                            filteredReports.map((report) => (
+                                <tr key={report.id} className="hover:bg-blue-50/30">
+                                    <td className="px-5 py-3.5 font-semibold text-slate-800">{report.user?.fullName}</td>
+                                    <td className="px-5 py-3.5 text-xs text-slate-500">
+                                        {report.user?.teams?.length > 0
+                                            ? report.user.teams.map(t => t.name).join(', ')
+                                            : 'Unassigned'}
+                                    </td>
+                                    <td className="px-5 py-3.5 text-slate-600">{report.project?.name}</td>
+                                    <td className="px-5 py-3.5 text-xs text-slate-500">
+                                        {new Date(report.weekStartDate).toLocaleDateString()} - <br />
+                                        {new Date(report.weekEndDate).toLocaleDateString()}
+                                    </td>
+                                    <td className="max-w-xs truncate px-5 py-3.5 text-slate-600" title={report.tasksCompleted}>{report.tasksCompleted}</td>
+                                    <td className="px-5 py-3.5">
+                                        <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${report.status === 'approved' ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/10' :
+                                            report.status === 'rejected' ? 'bg-red-50 text-red-700 ring-1 ring-red-600/10' : 'bg-amber-50 text-amber-700 ring-1 ring-amber-600/10'
+                                            }`}>
+                                            {report.status}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-3.5 text-center space-x-2 whitespace-nowrap">
+                                        {report.status !== 'approved' && (
+                                            <button onClick={() => handleStatusUpdate(report.id, 'approved')} className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-600 hover:shadow-md">
+                                                Approve
+                                            </button>
+                                        )}
+                                        {report.status !== 'rejected' && (
+                                            <button onClick={() => handleStatusUpdate(report.id, 'rejected')} className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50">
+                                                Reject
+                                            </button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
+                    </tbody>
+                </table>
             </div>
         </div>
     );

@@ -1,9 +1,10 @@
 // frontend/app/dashboard/layout.jsx
 import Sidebar from '@/components/Sidebar';
+// import AIChatWidget from '@/components/AIChatWidget';
 
 export default function DashboardLayout({ children }) {
     return (
-        <div className="flex h-screen w-full bg-gray-50 overflow-hidden">
+        <div className="flex h-screen w-full overflow-hidden" style={{ background: '#f1f5f9' }}>
 
             {/* The persistent left sidebar */}
             <Sidebar />
@@ -12,6 +13,7 @@ export default function DashboardLayout({ children }) {
             <main className="flex-1 overflow-y-auto">
                 {children}
             </main>
+            {/* <AIChatWidget /> */}
 
         </div>
     );
