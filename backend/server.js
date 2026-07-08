@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import reportRoutes from './routes/reportRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import teamRoutes from './routes/teamRoutes.js';
 
 // Import Routes
 import authRoutes from './routes/authRoutes.js';
@@ -20,6 +22,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/reports', reportRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/teams', teamRoutes);
 
 // Basic Health Check Route
 app.get('/api/health', (req, res) => {

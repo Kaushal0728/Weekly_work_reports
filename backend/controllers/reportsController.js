@@ -44,19 +44,20 @@ export const submitReport = async (req, res) => {
 
 export const getAllReports = async (req, res) => {
     try {
-        // Only fetch reports, but attach the user's name and project name to each one
         const reports = await prisma.report.findMany({
-            orderBy: { createdAt: 'desc' }, // Newest reports first
             include: {
+                project: { select: { id: true, name: true } },
+                // Tell Prisma to fetch the user AND their associated teams!
                 user: {
-                    select: { fullName: true, email: true }
-                },
-                project: {
-                    select: { name: true }
+                    select: {
+                        id: true,
+                        fullName: true,
+                        teams: { select: { id: true, name: true } }
+                    }
                 }
-            }
+            },
+            orderBy: { weekStartDate: 'desc' } // Good practice to order them by date
         });
-
         res.status(200).json(reports);
     } catch (error) {
         console.error("Error fetching reports:", error);
@@ -107,5 +108,44 @@ export const getMyReports = async (req, res) => {
     } catch (error) {
         console.error("Error fetching user reports:", error);
         res.status(500).json({ error: 'Failed to fetch your reports' });
+    }
+};
+
+export const updateMyReport = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+        const { tasksCompleted, tasksPlanned, blockers, hoursWorked } = req.body;
+
+        // 1. Find the report and ensure it belongs to this user
+        const existingReport = await prisma.report.findUnique({ where: { id: parseInt(id) } });
+
+        if (!existingReport) {
+            return res.status(404).json({ error: 'Report not found' });
+        }
+        if (existingReport.userId !== userId) {
+            return res.status(403).json({ error: 'You can only edit your own reports' });
+        }
+        if (existingReport.status === 'approved') {
+            return res.status(400).json({ error: 'Cannot edit a report that has already been approved' });
+        }
+
+        // 2. Update the report
+        const updatedReport = await prisma.report.update({
+            where: { id: parseInt(id) },
+            data: {
+                tasksCompleted,
+                tasksPlanned,
+                blockers,
+                hoursWorked: hoursWorked ? parseFloat(hoursWorked) : null,
+                // Reset status back to submitted in case it was 'rejected' and they are fixing it
+                status: 'submitted'
+            }
+        });
+
+        res.status(200).json({ message: 'Report updated successfully', report: updatedReport });
+    } catch (error) {
+        console.error("Error updating report:", error);
+        res.status(500).json({ error: 'Failed to update report' });
     }
 };
