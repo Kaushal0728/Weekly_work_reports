@@ -44,7 +44,6 @@ export const getAllReports = async (req, res) => {
         const reports = await prisma.report.findMany({
             include: {
                 project: { select: { id: true, name: true } },
-                // Tell Prisma to fetch the user AND their associated teams!
                 user: {
                     select: {
                         id: true,
@@ -53,7 +52,7 @@ export const getAllReports = async (req, res) => {
                     }
                 }
             },
-            orderBy: { weekStartDate: 'desc' } // Good practice to order them by date
+            orderBy: { weekStartDate: 'desc' }
         });
         res.status(200).json(reports);
     } catch (error) {
@@ -93,7 +92,7 @@ export const getMyReports = async (req, res) => {
 
         const reports = await prisma.report.findMany({
             where: { userId },
-            orderBy: { id: 'desc' }, // Newest first
+            orderBy: { id: 'desc' },
             include: {
                 project: {
                     select: { name: true }

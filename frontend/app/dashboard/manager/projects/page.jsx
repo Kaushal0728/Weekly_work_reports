@@ -53,7 +53,7 @@ export default function ManageProjects() {
         setName(project.name);
         setDescription(project.description || '');
         setStatus({ type: '', message: '' });
-        setIsModalOpen(true); // Open modal in edit mode
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
@@ -80,7 +80,7 @@ export default function ManageProjects() {
                 });
                 setProjects([...projects, response.project]);
             }
-            closeModal(); // Close on success
+            closeModal();
         } catch (error) {
             setStatus({ type: 'error', message: error.message });
         }

@@ -14,7 +14,7 @@ export const askAssistant = async (req, res) => {
             take: 50,
             orderBy: { weekStartDate: 'desc' },
             include: {
-                user: { select: { fullName: true } }, // ONLY send names, no emails/passwords!
+                user: { select: { fullName: true } },
                 project: { select: { name: true } }
             }
         });

@@ -38,12 +38,11 @@ export const updateTeam = async (req, res) => {
         const { id } = req.params;
         const { name, description, memberIds = [] } = req.body;
 
-        // Safely build the data object using 'set' to overwrite the array
         const teamData = { name, description };
         if (memberIds.length > 0) {
             teamData.members = { set: memberIds.map(userId => ({ id: parseInt(userId) })) };
         } else {
-            teamData.members = { set: [] }; // Explicitly clear all members if none are selected
+            teamData.members = { set: [] };
         }
 
         const updatedTeam = await prisma.team.update({

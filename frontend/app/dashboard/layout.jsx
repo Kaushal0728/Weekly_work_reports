@@ -1,6 +1,5 @@
 // frontend/app/dashboard/layout.jsx
 import Sidebar from '@/components/Sidebar';
-// import AIChatWidget from '@/components/AIChatWidget';
 
 export default function DashboardLayout({ children }) {
     return (
@@ -13,7 +12,6 @@ export default function DashboardLayout({ children }) {
             <main className="flex-1 overflow-y-auto">
                 {children}
             </main>
-            {/* <AIChatWidget /> */}
 
         </div>
     );

@@ -1,5 +1,5 @@
 // backend/controllers/userController.js
-import bcrypt from 'bcryptjs'; // Using the Windows-friendly bcryptjs!
+import bcrypt from 'bcryptjs';
 import prisma from '../db.js';
 
 // Get all users for the manager to view
@@ -46,7 +46,7 @@ export const createUser = async (req, res) => {
         // 4. Save to database
         const newUser = await prisma.user.create({
             data: { email, passwordHash, fullName, roleId: role.id },
-            select: { id: true, email: true, fullName: true, role: true } // Don't send password back!
+            select: { id: true, email: true, fullName: true, role: true }
         });
 
         res.status(201).json({ message: 'User created successfully', user: newUser });

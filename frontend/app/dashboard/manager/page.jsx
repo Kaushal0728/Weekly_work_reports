@@ -359,7 +359,7 @@ export default function ManagerDashboard() {
                             </button>
                         </div>
 
-                        {/* Modal Body (Scrollable if text is too long) */}
+                        {/* Modal Body  */}
                         <div className="p-6 overflow-y-auto space-y-6">
 
                             {/* Top Meta Data */}
@@ -379,8 +379,8 @@ export default function ManagerDashboard() {
                                 <div>
                                     <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Current Status</p>
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${selectedReport.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
-                                            selectedReport.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                                                'bg-amber-100 text-amber-800'
+                                        selectedReport.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                            'bg-amber-100 text-amber-800'
                                         }`}>
                                         {selectedReport.status}
                                     </span>
@@ -404,7 +404,7 @@ export default function ManagerDashboard() {
                                 </div>
                             </div>
 
-                            {/* Blockers (Highlighted in Red) */}
+                            {/* Blockers */}
                             <div>
                                 <p className="text-red-500 font-bold text-xs uppercase tracking-wider mb-2 flex items-center gap-1">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>

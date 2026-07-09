@@ -8,7 +8,7 @@ import { apiFetch } from '@/utils/api';
 export default function ManageTeams() {
     const router = useRouter();
     const [teams, setTeams] = useState([]);
-    const [users, setUsers] = useState([]); // Needed to populate the checkbox list
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
 
     // UI State
@@ -52,7 +52,7 @@ export default function ManageTeams() {
         setEditingId(null);
         setName('');
         setDescription('');
-        setSelectedMemberIds([]); // Clear selections
+        setSelectedMemberIds([]);
         setStatus({ type: '', message: '' });
         setIsModalOpen(true);
     };
