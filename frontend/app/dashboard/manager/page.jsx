@@ -11,6 +11,8 @@ export default function ManagerDashboard() {
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [selectedReport, setSelectedReport] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // --- Advanced Filter States ---
     const [statusFilter, setStatusFilter] = useState('All');
@@ -56,6 +58,16 @@ export default function ManagerDashboard() {
         } catch (err) {
             alert(`Failed to update status: ${err.message}`);
         }
+    };
+
+    const handleViewReport = (report) => {
+        setSelectedReport(report);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setSelectedReport(null);
+        setIsModalOpen(false);
     };
 
     // --- Dynamic Dropdown Options ---
@@ -306,6 +318,12 @@ export default function ManagerDashboard() {
                                         </span>
                                     </td>
                                     <td className="px-5 py-3.5 text-center space-x-2 whitespace-nowrap">
+                                        <button
+                                            onClick={() => handleViewReport(report)}
+                                            className="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                                        >
+                                            View
+                                        </button>
                                         {report.status !== 'approved' && (
                                             <button onClick={() => handleStatusUpdate(report.id, 'approved')} className="rounded-lg bg-emerald-500 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-600 hover:shadow-md">
                                                 Approve
@@ -323,6 +341,95 @@ export default function ManagerDashboard() {
                     </tbody>
                 </table>
             </div>
+            {/* --- REPORT DETAILS MODAL --- */}
+            {isModalOpen && selectedReport && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+
+                        {/* Modal Header */}
+                        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 className="text-lg font-bold text-gray-800">
+                                Weekly Report Details
+                            </h3>
+                            <button
+                                onClick={handleCloseModal}
+                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                            >
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
+                        {/* Modal Body (Scrollable if text is too long) */}
+                        <div className="p-6 overflow-y-auto space-y-6">
+
+                            {/* Top Meta Data */}
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Team Member</p>
+                                    <p className="font-semibold text-gray-900">{selectedReport.user?.fullName || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Project</p>
+                                    <p className="font-semibold text-gray-900">{selectedReport.project?.name || 'Unassigned'}</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Time Logged</p>
+                                    <p className="font-semibold text-gray-900">{selectedReport.hoursWorked ? `${selectedReport.hoursWorked} Hours` : 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-1">Current Status</p>
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${selectedReport.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                                            selectedReport.status === 'rejected' ? 'bg-red-100 text-red-800' :
+                                                'bg-amber-100 text-amber-800'
+                                        }`}>
+                                        {selectedReport.status}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <hr className="border-gray-100" />
+
+                            {/* Task Data */}
+                            <div>
+                                <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-2">Completed Tasks</p>
+                                <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm whitespace-pre-wrap border border-gray-100">
+                                    {selectedReport.tasksCompleted || 'No tasks listed.'}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-gray-500 font-medium text-xs uppercase tracking-wider mb-2">Planned for Next Week</p>
+                                <div className="bg-gray-50 p-4 rounded-lg text-gray-700 text-sm whitespace-pre-wrap border border-gray-100">
+                                    {selectedReport.tasksPlanned || 'Nothing planned.'}
+                                </div>
+                            </div>
+
+                            {/* Blockers (Highlighted in Red) */}
+                            <div>
+                                <p className="text-red-500 font-bold text-xs uppercase tracking-wider mb-2 flex items-center gap-1">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    Blockers & Issues
+                                </p>
+                                <div className="bg-red-50 p-4 rounded-lg text-red-900 text-sm whitespace-pre-wrap border border-red-100">
+                                    {selectedReport.blockers ? selectedReport.blockers : <span className="text-red-400 italic">No blockers reported.</span>}
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end">
+                            <button
+                                onClick={handleCloseModal}
+                                className="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+                            >
+                                Close Report
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
